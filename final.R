@@ -16,3 +16,11 @@ data <- data[Year > 1799 & Year < 2013]
 
 data[, RegionLati := substr(Latitude,nchar(Latitude),nchar(Latitude))]
 data[, RegionLong := substr(Longitude,nchar(Longitude),nchar(Longitude))]
+
+data[,Longitude := as.double(substr(Longitude,1,nchar(Longitude)-1))]
+data[,Latitude := as.double(substr(Latitude,1,nchar(Latitude)-1))]
+
+west <- data[RegionLong == "W"]
+east <- data[RegionLong == "E"]
+north <- data[RegionLati == "N"]
+south <- data[RegionLati == "S"]
