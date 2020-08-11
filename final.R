@@ -14,6 +14,7 @@ data[,AverageTemperatureUncertainty := NULL]
 data[, dt := as.Date(data$dt)]
 data[, dt := substr(dt,1,7)]
 data[, Month := substr(dt,6,7)]
+data[, Year := substr(dt,6,7)]
 #range of years: 1800 to 2012
 data <- data[as.integer(substr(dt,1,4)) > 1799 & as.integer(substr(dt,1,4)) < 2013]
 
@@ -30,6 +31,7 @@ data[,FixedLati := ifelse(Latitude < 1,0,ifelse(Latitude < 31,30,
                            ifelse(Latitude < 61,60,90)))]
 
 zero_line <- data[FixedLati == 0]
+zero_line[,Avg := sum(AverageTemperature) / .N , by = dt]
 west <- data[RegionLong == "W"]
 east <- data[RegionLong == "E"]
 north <- data[RegionLati == "N"]
