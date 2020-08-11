@@ -1,20 +1,22 @@
 library(data.table)
 
 #my goal is to divide the data-table to 4-sub Tables(WEST,EAST,NORTH,SOUTH)
+#one table will contain the zero line
 #Longitude Diveded to 4 intervals 0-1, 1-60, 61-120, 121 - 180 (FixedLongi)
 #Latitude Diveded to 4 intervals 0-1, 1-30, 31-60, 61-90 (FixedLati)
 
 #load the data to data table
 data = fread("GlobalLandTemperaturesByCity.csv")
 
-#deleting NA rows
+#deleting NA rows & unnecessary columns
 data <- data[!is.na(AverageTemperature)]
-data[,AverageTemperatureUncertainty := NULL]
+data[, AverageTemperatureUncertainty := NULL]
+data[, City := NULL]
 #changing the class of dt field from char to DATE
 data[, dt := as.Date(data$dt)]
 data[, dt := substr(dt,1,7)]
 data[, Month := substr(dt,6,7)]
-data[, Year := substr(dt,6,7)]
+data[, Year := substr(dt,1,4)]
 #range of years: 1800 to 2012
 data <- data[as.integer(substr(dt,1,4)) > 1799 & as.integer(substr(dt,1,4)) < 2013]
 
@@ -31,8 +33,12 @@ data[,FixedLati := ifelse(Latitude < 1,0,ifelse(Latitude < 31,30,
                            ifelse(Latitude < 61,60,90)))]
 
 zero_line <- data[FixedLati == 0]
-zero_line[,Avg := sum(AverageTemperature) / .N , by = dt]
+zero_line[,AvgTmp := sum(AverageTemperature) / .N , by = dt]
 west <- data[RegionLong == "W"]
+west[,AvgTmp := sum(AverageTemperature) / .N , by = dt]
 east <- data[RegionLong == "E"]
+east[,AvgTmp := sum(AverageTemperature) / .N , by = dt]
 north <- data[RegionLati == "N"]
+north[,AvgTmp := sum(AverageTemperature) / .N , by = dt]
 south <- data[RegionLati == "S"]
+south[,AvgTmp := sum(AverageTemperature) / .N , by = dt]
