@@ -66,23 +66,31 @@ monthly_temp = function(table, Long, Lat, msg){
     table <- table[Long == table$FixedLongi & Lat == table$FixedLati]
   }
   
-  ######Creating plots with t-test & r^2########
+  ######Creating plots & linear models ##########
   for(m in  1:12){
+    
     selected_month = table[table$Month == m_num[m],]
-    lmTmp = lm(selected_month$AvgTmp~selected_month$Year, data = selected_month)
+    
+    lmTmp = lm(selected_month$AvgTmp~as.numeric(selected_month$Year))
     Incline = coef(lmTmp)[2]
     r2 = summary(lmTmp)$r.squared
-    print(r2)
     selected_month[, Month := NULL]
-    
     selected_month =  unique(selected_month)
-
     pval = t.test(selected_month$AvgTmp,mu=0)
-    print(pval)
+    
     par(mar = rep(2, 4))
     plot(selected_month$Year,selected_month$AvgTmp, type = "p",
          pch = 16, cex = 1.3, xlab = "Year", ylab = "Temparature",
-         main = paste(m_name[m]),col="cyan3",las = 1)
-    mtext(paste("R^2=",toString(r2,width = 10),", P = ",toString(pval$p.value)), side=3, cex=0.7,font=1)
-  }
+         main = paste0(m_name[m]),col="cyan3",las = 1)
+    mtext(paste("R^2=",round(r2,digits = 4),", P = ",round(pval$p.value,digits = 4)), side=3, cex=0.7,font=1)
+    
+    
+    if(Incline > 0.5){
+      abline(lmTmp, col = "red")
+    }else if(Incline < -0.5){
+      abline(lmTmp, col = "green")
+    }else{
+      abline(lmTmp, col = "chartreuse3")
+    }
+    }
 }
