@@ -1,4 +1,5 @@
 library(data.table)
+library(dplyr)
 library(ggplot2)
 
 #my goal is to divide the data-table to 4-sub Tables(WEST,EAST,NORTH,SOUTH)
@@ -45,29 +46,43 @@ east_south <- data[RegionLong == "E" & RegionLati == "S"]
 east_south[,AvgTmp := sum(AverageTemperature) / .N , by = dt]
 
 ####################################Function to plot temp of the months####################################
-monthly_temp = function(table, fixedLong, fixedLat, msg){
+monthly_temp = function(table, Long, Lat, msg){
   
   m_num = c("01","02","03","04","05","06","07","08","09","10","11","12")
   m_name = c("January","February","March","April","May","June","July","August"
          ,"September","October","November","December" )
   par(mfrow=c(4,3))
   options(digit = 5) #enable the number to be five digits only
+  
   #################DELETING UNNECESSARY COLUMNS#####################
-  table[,AverageTemperature := NULL]
+  table[, AverageTemperature := NULL]
   table[, Latitude := NULL]
   table[, Longitude := NULL]
   table[, Country := NULL]
   table[, RegionLati := NULL]
   table[, RegionLong := NULL]
   
-  if(fixedLat != 0){
-    table <- table[fixedLong == FixedLongi & fixedLat == FixedLati]
+  if(Lat != 0){
+    table <- table[Long == table$FixedLongi & Lat == table$FixedLati]
   }
   
   ######Creating plots with t-test & r^2########
   for(m in  1:12){
-    selected_month = table[table&month == m_num[m], ]
+    selected_month = table[table$Month == m_num[m],]
+    lmTmp = lm(selected_month$AvgTmp~selected_month$Year, data = selected_month)
+    Incline = coef(lmTmp)[2]
+    r2 = summary(lmTmp)$r.squared
+    print(r2)
+    selected_month[, Month := NULL]
     
-    
+    selected_month =  unique(selected_month)
+
+    pval = t.test(selected_month$AvgTmp,mu=0)
+    print(pval)
+    par(mar = rep(2, 4))
+    plot(selected_month$Year,selected_month$AvgTmp, type = "p",
+         pch = 16, cex = 1.3, xlab = "Year", ylab = "Temparature",
+         main = paste(m_name[m]),col="cyan3",las = 1)
+    mtext(paste("R^2=",toString(r2,width = 10),", P = ",toString(pval$p.value)), side=3, cex=0.7,font=1)
   }
 }
