@@ -1,4 +1,5 @@
 library(data.table)
+library(ggplot2)
 
 #my goal is to divide the data-table to 4-sub Tables(WEST,EAST,NORTH,SOUTH)
 #one table will contain the zero line
@@ -43,3 +44,17 @@ east_north[,AvgTmp := sum(AverageTemperature) / .N , by = dt]
 east_south <- data[RegionLong == "E" & RegionLati == "S"]
 east_south[,AvgTmp := sum(AverageTemperature) / .N , by = dt]
 
+####################################Function to plot temp of the months####################################
+monthly_temp = function(table, fixedVal, msg){
+  
+  m_num = c("01","02","03","04","05","06","07","08","09","10","11","12")
+  m_name = c("January","February","March","April","May","June","July","August"
+         ,"September","October","November","December" )
+  par(mfrow=c(4,3))
+  options(digit = 5) #enable the number to be five digits only
+  #################DELETING UNNECESSARY COLUMNS#####################
+  table[,AverageTemperature := NULL]
+  table[, Latitude := NULL]
+  table[, Longitude := NULL]
+  table[, Country := NULL]
+}
