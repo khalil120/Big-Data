@@ -57,4 +57,7 @@ monthly_temp = function(table, fixedVal, msg){
   table[, Latitude := NULL]
   table[, Longitude := NULL]
   table[, Country := NULL]
+  table[, RegionLati := NULL]
+  table[, RegionLong := NULL]
+  View(table)
 }
