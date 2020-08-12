@@ -45,7 +45,7 @@ east_south <- data[RegionLong == "E" & RegionLati == "S"]
 east_south[,AvgTmp := sum(AverageTemperature) / .N , by = dt]
 
 ####################################Function to plot temp of the months####################################
-monthly_temp = function(table, fixedVal, msg){
+monthly_temp = function(table, fixedLong, fixedLat, msg){
   
   m_num = c("01","02","03","04","05","06","07","08","09","10","11","12")
   m_name = c("January","February","March","April","May","June","July","August"
@@ -59,5 +59,15 @@ monthly_temp = function(table, fixedVal, msg){
   table[, Country := NULL]
   table[, RegionLati := NULL]
   table[, RegionLong := NULL]
-  View(table)
+  
+  if(fixedLat != 0){
+    table <- table[fixedLong == FixedLongi & fixedLat == FixedLati]
+  }
+  
+  ######Creating plots with t-test & r^2########
+  for(m in  1:12){
+    selected_month = table[table&month == m_num[m], ]
+    
+    
+  }
 }
