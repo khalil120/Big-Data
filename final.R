@@ -83,7 +83,8 @@ monthly_temp = function(table1, Long, Lat){
     plot(selected_month$Year,selected_month$AvgTmp, type = "p",
          pch = 16, cex = 1.3, xlab = "Year", ylab = "Temparature",
          main = paste0(m_name[m]),col="cyan3",las = 1)
-    mtext(paste("R^2=",round(r2,digits = 4),", P = ",round(pval$p.value,digits = 4)), side=3, cex=0.7,font=1)
+    mtext(paste("R^2=",round(r2,digits = 4),", P = ",round(pval$p.value,digits = 4),
+                "Inc = ",round(Incline,digits = 4)), side=3, cex=0.5,font=1)
     
     
     if(Incline > 0){
@@ -91,5 +92,6 @@ monthly_temp = function(table1, Long, Lat){
     }else{
       abline(lmTmp, col = "chartreuse3")
     }
-    }
+  }
 }
+####################################END OF THE FUNCTION####################################
