@@ -46,13 +46,14 @@ east_south <- data[RegionLong == "E" & RegionLati == "S"]
 east_south[,AvgTmp := sum(AverageTemperature) / .N , by = dt]
 
 ####################################Function to plot temp of the months####################################
-monthly_temp = function(table, Long, Lat, msg){
+monthly_temp = function(table1, Long, Lat){
+  
+  table <- copy(table1)
   
   m_num = c("01","02","03","04","05","06","07","08","09","10","11","12")
   m_name = c("January","February","March","April","May","June","July","August"
          ,"September","October","November","December" )
   par(mfrow=c(4,3))
-  options(digit = 5) #enable the number to be five digits only
   
   #################DELETING UNNECESSARY COLUMNS#####################
   table[, AverageTemperature := NULL]
@@ -85,10 +86,8 @@ monthly_temp = function(table, Long, Lat, msg){
     mtext(paste("R^2=",round(r2,digits = 4),", P = ",round(pval$p.value,digits = 4)), side=3, cex=0.7,font=1)
     
     
-    if(Incline > 0.5){
+    if(Incline > 0){
       abline(lmTmp, col = "red")
-    }else if(Incline < -0.5){
-      abline(lmTmp, col = "green")
     }else{
       abline(lmTmp, col = "chartreuse3")
     }
